@@ -40,6 +40,13 @@ form.addEventListener("submit", function (e) {
     return;
   }
 
+  
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailPattern.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
   const userData = {
     name,
     email,
@@ -49,40 +56,50 @@ form.addEventListener("submit", function (e) {
   };
 
   
-  localStorage.setItem("registeredUser", JSON.stringify(userData));
+  let users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+ 
+  users.push(userData);
+
   
+  localStorage.setItem("registeredUsers", JSON.stringify(users));
+
   
   displayStoredData();
 
-  
+ 
   form.reset();
   alert("Registration successful!");
 });
 
 function displayStoredData() {
-  const data = localStorage.getItem("registeredUser");
+  const data = JSON.parse(localStorage.getItem("registeredUsers")) || [];
   const tbody = userDataTable;
-  
+
   
   tbody.innerHTML = '';
 
-  if (data) {
-    const user = JSON.parse(data);
-    
-    
-    const row = tbody.insertRow();
-    row.insertCell(0).textContent = user.name;
-    row.insertCell(1).textContent = user.email;
-    row.insertCell(2).textContent = user.password;
-    row.insertCell(3).textContent = user.dob;
-    row.insertCell(4).textContent = user.acceptedTerms ? 'True' : 'False';
+  if (data.length > 0) {
+   
+    data.forEach(user => {
+      const row = tbody.insertRow();
+      row.insertCell(0).textContent = user.name;
+      row.insertCell(1).textContent = user.email;
+      row.insertCell(2).textContent = user.password;
+      row.insertCell(3).textContent = user.dob;
+      row.insertCell(4).textContent = user.acceptedTerms ? 'True' : 'False';
+    });
   } else {
-    
+   
     const row = tbody.insertRow();
     row.insertCell(0).colSpan = 5;
     row.insertCell(0).textContent = "No data stored.";
   }
 }
 
-// Call displayStoredData to show data if available or show "No data stored"
+
 displayStoredData();
+
+
+  
+ 
