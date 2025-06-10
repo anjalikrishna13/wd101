@@ -11,7 +11,6 @@ function fillTable() {
   }
   return user_entries;
 }
-user_entries = fillTable();
 
 let username = element("name"),
   email = element("email"),
@@ -33,7 +32,13 @@ function verify(elem, message, cnd) {
 }
 
 function checkDOB() {
-  let age = new Date().getFullYear() - new Date(dob.value).getFullYear();
+  let birthDate = new Date(dob.value);
+  let today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  let m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
   return age >= 18 && age <= 55;
 }
 
@@ -49,7 +54,8 @@ username.addEventListener("input", (e) => {
 
 email.addEventListener("input", (e) => {
   e.preventDefault();
-  verify(email, message_email, !(email.value.includes("@") && email.value.includes(".")));
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  verify(email, message_email, !emailPattern.test(email.value));
 });
 
 dob.addEventListener("input", (e) => {
@@ -74,7 +80,6 @@ function makeObject() {
 
 function displayTable() {
   let table = element("user-table");
-  let entries = user_entries;
   let str = `<tr>
                 <th>Name</th>
                 <th>Email</th>
@@ -82,13 +87,13 @@ function displayTable() {
                 <th>Dob</th>
                 <th>Accepted terms?</th>
             </tr>\n`;
-  for (let i = 0; i < entries.length; i++) {
+  for (let entry of user_entries) {
     str += `<tr>
-              <td>${entries[i].name}</td>
-              <td>${entries[i].email}</td>
-              <td>${entries[i].password}</td>
-              <td>${entries[i].dob}</td>
-              <td>${entries[i].checked}</td>
+              <td>${entry.name}</td>
+              <td>${entry.email}</td>
+              <td>${entry.password}</td>
+              <td>${entry.dob}</td>
+              <td>${entry.checked}</td>
             </tr>\n`;
   }
   table.innerHTML = str;
@@ -96,14 +101,29 @@ function displayTable() {
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  if (tc.checked) {
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  verify(username, message_name, username.value.length < 3);
+  verify(email, message_email, !emailPattern.test(email.value));
+  verify(dob, message_dob, !checkDOB());
+  verify(tc, message_agree, !tc.checked);
+
+  if (
+    username.value.length >= 3 &&
+    emailPattern.test(email.value) &&
+    checkDOB() &&
+    tc.checked
+  ) {
     let obj = makeObject();
     user_entries.push(obj);
     localStorage.setItem("user_entries", JSON.stringify(user_entries));
+    displayTable();
+    form.reset(); // Clear form
   }
-  displayTable();
 });
 
 window.onload = () => {
+  user_entries = fillTable();
   displayTable();
 };
