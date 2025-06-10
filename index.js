@@ -1,59 +1,111 @@
-const form = document.getElementById("registrationForm");
-const tableBody = document.querySelector("#userDataTable tbody");
-
-function calculateAge(dob) {
-  const birthDate = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
+body {
+    background-color: #202326;
+    color: #0c0b0b;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    line-height: 1.42857143;
+    margin: 0;
+    align-items: center;
 }
 
-function displayStoredData() {
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  tableBody.innerHTML = "";
-
-  users.forEach(user => {
-    const row = tableBody.insertRow();
-    row.insertCell(0).textContent = user.name;
-    row.insertCell(1).textContent = user.email;
-    row.insertCell(2).textContent = user.password;
-    row.insertCell(3).textContent = user.dob;
-    row.insertCell(4).textContent = user.termsAccepted ? "True" : "False";
-  });
+#main {
+    margin: 100px 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 500px;
+    width: 90%;
 }
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+#main h1 {
+    padding-top: 10px;
+    padding-left: 20px;
+    font-size: 42px;
+}
 
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const dob = document.getElementById("dob").value;
-  const termsAccepted = document.getElementById("terms").checked;
+#form-box {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: left;
+    text-align: center;
+    height: 500px;
+    width: 500px;
+    box-shadow: rgba(18, 18, 35, 0.25) 0px 6px 12px -2px,
+                rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
 
-  const age = calculateAge(dob);
-  if (age < 18 || age > 55) {
-    alert("Age must be between 18 and 55.");
-    return;
-  }
+.inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: left;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+}
 
-  const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-  if (!emailPattern.test(email)) {
-    alert("Invalid email address.");
-    return;
-  }
+.inputs input {
+    width: 240px;
+    height: 30px;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
 
-  const user = { name, email, password, dob, termsAccepted };
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  users.push(user);
-  localStorage.setItem("users", JSON.stringify(users));
+#agree {
+    padding-left: 20px;
+    padding-top: 20px;
+    font-size: 16px;
+}
 
-  displayStoredData();
-  form.reset();
-});
+#agree input {
+    margin-top: 10px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgb(137, 24, 24);
+    border-radius: 4px;
+}
 
-displayStoredData();
+#submit {
+    margin-left: 280px;
+    margin-top: 10px;
+    font-size: 20px;
+    height: 50px;
+    width: 90px;
+    border: 0;
+    border-radius: 10px;
+    background-color: #28a745; /* ✅ Green background */
+    color: white;
+    cursor: pointer;
+    box-shadow: rgba(53, 53, 106, 0.25) 0px 6px 12px -2px,
+                rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+#submit:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+#table-box {
+    margin: 0 20px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: left;
+    text-align: center;
+    height: 500px;
+    width: 800px;
+    box-shadow: rgba(62, 172, 78, 0.25) 0px 6px 12px -2px,
+                rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+td, th {
+    padding-left: 10px;
+    width: 100px;
+    text-align: left;
+}
